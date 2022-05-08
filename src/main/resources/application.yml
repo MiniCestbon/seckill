@@ -1,0 +1,97 @@
+server:
+  port: 8080
+
+spring:
+  thymeleaf:
+    # 关闭缓存
+    cache: false
+
+  redis:
+    #host: 192.168.30.128
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 10000ms
+    # 客户端
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: 10000ms
+        max-idle: 8
+        min-idle: 5
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=UTF-8&serverTime=Asia/Shanghai
+    username: root
+    password: 123456
+    # 连接池
+    hikari:
+      pool-name: DateHikariCP
+      minimum-idle: 5
+      idle-timeout: 1500000
+      maximum-pool-size: 10
+      auto-commit: true
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: select 1
+
+  web:
+    #静态资源处理
+    #启动默认静态资源处理，默认启动
+    #资源配链启动缓存，默认启动
+    #启动资源链，默认禁用
+    #启用压缩资源（gzip，brotil）解析，默认禁用
+    resources:
+      add-mappings: true
+      cache:
+        cachecontrol:
+          max-age: 3600
+      chain:
+        cache: true
+        enabled: true
+        compressed: true
+      static-locations: classpath:/static/
+
+  rabbitmq:
+    host: 192.168.30.128
+    username: guest
+    password: guest
+    virtual-host: /
+    port: 5672
+    listener:
+      simple:
+        # 消费者最小数量
+        concurrency: 10
+        # 消费者最大数量
+        max-concurrency: 10
+        # 限制消费者每次只能处理一条消息
+        prefetch: 1
+        # 是否默认启动容器
+        auto-startup: true
+        # 被拒绝时是否重新进入队列
+        default-requeue-rejected: true
+    template:
+      retry:
+        # 发布重试
+        enabled: true
+        # 重试时间
+        initial-interval: 1000ms
+        # 重试最大次数
+        max-attempts: 3
+        # 重试最大间隔时间
+        max-interval: 10000ms
+        # 重试间隔乘数  2 -->  10  20  40
+        multiplier: 1
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  # mybatis 数据返回类型别名（默认是类名）
+  type-aliases-package: com.evian.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# mybatis sql 日志
+logging:
+  level:
+    com.evian.mapper: debug
